@@ -8,10 +8,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.apap.tutorial7.model.FlightModel;
 import com.apap.tutorial7.model.PilotModel;
+import com.apap.tutorial7.rest.Setting;
 import com.apap.tutorial7.service.FlightService;
 import com.apap.tutorial7.service.PilotService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * FlightController
@@ -152,4 +155,18 @@ public class FlightController {
         flightService.addFlight(flight);
         return flight;
     }
+    
+    @Autowired
+	RestTemplate restTemplate;
+	
+	@Bean
+	public RestTemplate rest2() {
+		return new RestTemplate();
+	}
+	
+	@GetMapping(value="/status/{kota}")
+	public String getKota(@PathVariable("kota") String kota) throws Exception {
+		String path = Setting.amadeusIndo + "&term=" + kota;
+		return restTemplate.getForEntity(path, String.class).getBody();
+	}
 }
